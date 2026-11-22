@@ -1,5 +1,32 @@
 # better-auth
 
+## 1.7.28
+
+### Patch Changes
+
+- [#12806](https://github.com/better-auth/better-auth/pull/12806) [`47a77c0`](https://github.com/better-auth/better-auth/commit/47a77c0fd36b89db20019ecb60223471e6b6f794) Thanks [@bytaesu](https://github.com/bytaesu)! - Revoked sessions are now removed from secondary storage even when a database `after` hook throws during password reset or user deletion. Before, they could stay valid until they expired.
+
+- [#12858](https://github.com/better-auth/better-auth/pull/12858) [`7e229f0`](https://github.com/better-auth/better-auth/commit/7e229f009731969ed183860feddcd58e62b70ad7) Thanks [@bytaesu](https://github.com/bytaesu)! - Deleting a user no longer reports success when a database read fails, a `user.delete.before` hook vetoes the delete, or the database skips it without an error. A failed read now surfaces as an error. A veto or a skipped delete answers `FAILED_TO_DELETE_USER` and keeps the user's sessions and accounts, on databases with transactions for a skipped delete. `user.delete.before` now runs before the session and account deletes.
+
+- [#12853](https://github.com/better-auth/better-auth/pull/12853) [`2ba7622`](https://github.com/better-auth/better-auth/commit/2ba762276c39db0ed5e5de3e8180fd3f85039921) Thanks [@bytaesu](https://github.com/bytaesu)! - Fix `/device/code` returning a 500 on a user or device code collision with the Drizzle adapter. The collision is now retried with a new code, as with the other adapters.
+
+- [#12858](https://github.com/better-auth/better-auth/pull/12858) [`7e229f0`](https://github.com/better-auth/better-auth/commit/7e229f009731969ed183860feddcd58e62b70ad7) Thanks [@bytaesu](https://github.com/bytaesu)! - `/revoke-session` and `/admin/revoke-user-session` no longer report success when the session survives, such as when a `session.delete.before` hook vetoes the delete or the database read before the delete fails.
+
+- [#12858](https://github.com/better-auth/better-auth/pull/12858) [`7e229f0`](https://github.com/better-auth/better-auth/commit/7e229f009731969ed183860feddcd58e62b70ad7) Thanks [@bytaesu](https://github.com/bytaesu)! - Revoking all of a user's sessions now fails when `secondaryStorage` cannot clean up the cached sessions, after the remaining delete hooks have run. Previously the call reported success, and the cached sessions could keep working until they expired.
+
+- [#12858](https://github.com/better-auth/better-auth/pull/12858) [`7e229f0`](https://github.com/better-auth/better-auth/commit/7e229f009731969ed183860feddcd58e62b70ad7) Thanks [@bytaesu](https://github.com/bytaesu)! - A session cached in `secondaryStorage` without its user no longer breaks `getSession`. The user is now read from the database, where `getSession` previously failed for every request until the cached session expired.
+
+- [#12860](https://github.com/better-auth/better-auth/pull/12860) [`3011e5c`](https://github.com/better-auth/better-auth/commit/3011e5ccb6cf3d27f37f8b5bf6bf5b9891a2367a) Thanks [@bytaesu](https://github.com/bytaesu)! - The `username` plugin now checks usernames on `/update-user` against the session the endpoint resolved, so re-sending your own username with a bearer token no longer fails as already taken. Signed-out `/update-user` calls with a taken username now return 401 like other signed-out calls.
+
+- Updated dependencies [[`47a77c0`](https://github.com/better-auth/better-auth/commit/47a77c0fd36b89db20019ecb60223471e6b6f794), [`7e229f0`](https://github.com/better-auth/better-auth/commit/7e229f009731969ed183860feddcd58e62b70ad7), [`7e229f0`](https://github.com/better-auth/better-auth/commit/7e229f009731969ed183860feddcd58e62b70ad7)]:
+  - @better-auth/core@1.7.28
+  - @better-auth/drizzle-adapter@1.7.28
+  - @better-auth/kysely-adapter@1.7.28
+  - @better-auth/memory-adapter@1.7.28
+  - @better-auth/mongo-adapter@1.7.28
+  - @better-auth/prisma-adapter@1.7.28
+  - @better-auth/telemetry@1.7.28
+
 ## 1.7.27
 
 ### Patch Changes
